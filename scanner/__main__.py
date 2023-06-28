@@ -43,27 +43,26 @@ def execute():
 @click.command()
 @click.option('-c', '--config', type=click.Path(exists=True), help='Config file path')
 def main(config):
-    def main():
-        logger.add("service.log", rotation="1 day", level="INFO")
+    logger.add("service.log", rotation="1 day", level="INFO")
 
-        # Check if the service is already running
-        if is_service_running():
-            logger.error("Another instance of the service is already running. Exiting.")
-            return
+    # Check if the service is already running
+    if is_service_running():
+        logger.error("Another instance of the service is already running. Exiting.")
+        return
 
-        with daemon.DaemonContext():
-            while True:
-                try:
-                    logger.info("Processing unread blocks...")
-                    execute()
-                    time.sleep(ConfigurationHelper().get_inteval())
-                except Exception as e:
-                    logger.exception(f"An error occurred: {str(e)}")
-                    break
+    with daemon.DaemonContext():
+        while True:
+            try:
+                logger.info("Processing unread blocks...")
+                execute()
+                time.sleep(ConfigurationHelper().get_inteval())
+            except Exception as e:
+                logger.exception(f"An error occurred: {str(e)}")
+                break
 
-                # Remove the lock file to release the lock
-                ConfigurationHelper().dump()
-                os.unlink(lock_file)
+            # Remove the lock file to release the lock
+            ConfigurationHelper().dump()
+            os.unlink(lock_file)
 
 
 if __name__ == "__main__":
