@@ -1,6 +1,9 @@
 """Console script for scanner."""
 import sys
 import click
+from loguru import logger
+
+logger.add(sink=sys.stdout, level="INFO")
 
 
 @click.command()
