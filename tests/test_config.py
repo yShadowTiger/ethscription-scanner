@@ -10,25 +10,19 @@ Feature:
 Scenario:
 
 """
-import os.path
 import unittest
 
-from loguru import logger
-
-from scanner.common import ConfigurationHelper, Constant
+from scanner.common import ConfigurationHelper
 
 
 class ConfigTestCase(unittest.TestCase):
-    def setUp(self):
-        self.config_file_path = os.path.join(os.environ.get(Constant.KEY_PROJECT_DIRECTORY), 'scanner.conf')
-        logger.info(self.config_file_path)
 
     def test_singleton(self):
-        self.assertEqual(ConfigurationHelper(self.config_file_path),
-                         ConfigurationHelper(self.config_file_path))
+        self.assertEqual(ConfigurationHelper(),
+                         ConfigurationHelper())
 
     def test_get_config(self):
-        internval = ConfigurationHelper(self.config_file_path).get_interval()
+        internval = ConfigurationHelper().get_interval()
         self.assertEqual(3, internval)
 
 

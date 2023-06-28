@@ -12,6 +12,6 @@ Scenario:
 
 
 class Constant:
-    KEY_PROJECT_DIRECTORY='PROJECT_DIRECTORY'
-    CONFIG_FILE = 'scanner.conf'
+    KEY_PROJECT_DIRECTORY = 'PROJECT_DIRECTORY'
+    PROJECT_CONFIG_FILE = 'scanner.conf'
     INTERVAL = 5

@@ -12,21 +12,27 @@ Scenario:
 from loguru import logger
 
 from scanner.chain import EVMScanner
+from scanner.common import ConfigurationHelper
 
 
 class EthereumScanner(EVMScanner):
     KEY_API_SETTING = 'ETHEREUM_API'
+    MAX_BLOCKS = 1000
 
     def __init__(self):
         super().__init__()
 
     def process(self):
+        last_block_numer = ConfigurationHelper().get_last_block()
         latest_block_number = self.get_latest_block_number()
 
-        for offset in range(100, 10, -1):
-            block_number = latest_block_number - offset
+        if latest_block_number > last_block_numer + self.MAX_BLOCKS:
+            latest_block_number = last_block_numer + self.MAX_BLOCKS
+
+        for block_number in range(last_block_numer, latest_block_number):
             block = self.get_block(block_number)
             self.parse_block(block)
+            ConfigurationHelper().set_last_block(block_number)
 
     def get_latest_block_number(self):
         latest_block_number = self.web3.eth.block_number
