@@ -13,6 +13,7 @@ import fcntl
 import os
 import time
 
+import click as click
 import daemon
 from loguru import logger
 
@@ -31,32 +32,34 @@ def is_service_running():
 
 
 # Task processor
-def process():
+def execute():
     pass
 
 
 # Main function to run the daemon
-def main():
-    logger.add("service.log", rotation="1 day")
+@click.command()
+@click.option('-c', '--config', type=click.Path(exists=True), help='Config file path')
+def main(config):
+    def main():
+        logger.add("service.log", rotation="1 day")
 
-    # Check if the service is already running
-    if is_service_running():
-        logger.error("Another instance of the service is already running. Exiting.")
-        return
+        # Check if the service is already running
+        if is_service_running():
+            logger.error("Another instance of the service is already running. Exiting.")
+            return
 
-    with daemon.DaemonContext():
-        while True:
-            try:
-                logger.info("Processing unread blocks...")
-                # process_unread_blocks()
-                # logger.info("Processing complete. Sleeping for 1 hour.")
-                time.sleep(3600)  # Sleep for 1 hour
-            except Exception as e:
-                logger.exception(f"An error occurred: {str(e)}")
-                break
+        with daemon.DaemonContext():
+            while True:
+                try:
+                    logger.info("Processing unread blocks...")
+                    execute()
+                    time.sleep(3600)  # Sleep for 1 hour
+                except Exception as e:
+                    logger.exception(f"An error occurred: {str(e)}")
+                    break
 
-            # Remove the lock file to release the lock
-            os.unlink(lock_file)
+                # Remove the lock file to release the lock
+                os.unlink(lock_file)
 
 
 if __name__ == "__main__":
