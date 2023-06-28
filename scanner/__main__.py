@@ -17,6 +17,9 @@ import click as click
 import daemon
 from loguru import logger
 
+from scanner.chain import EthereumScanner
+from scanner.common import ConfigurationHelper
+
 lock_file = "/var/run/ethereum_service.lock"
 
 
@@ -33,7 +36,7 @@ def is_service_running():
 
 # Task processor
 def execute():
-    pass
+    EthereumScanner().process()
 
 
 # Main function to run the daemon
@@ -41,7 +44,7 @@ def execute():
 @click.option('-c', '--config', type=click.Path(exists=True), help='Config file path')
 def main(config):
     def main():
-        logger.add("service.log", rotation="1 day")
+        logger.add("service.log", rotation="1 day", level="INFO")
 
         # Check if the service is already running
         if is_service_running():
@@ -53,12 +56,13 @@ def main(config):
                 try:
                     logger.info("Processing unread blocks...")
                     execute()
-                    time.sleep(3600)  # Sleep for 1 hour
+                    time.sleep(ConfigurationHelper().get_inteval())
                 except Exception as e:
                     logger.exception(f"An error occurred: {str(e)}")
                     break
 
                 # Remove the lock file to release the lock
+                ConfigurationHelper().dump()
                 os.unlink(lock_file)
 
 
