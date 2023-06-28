@@ -50,7 +50,7 @@ class ConfigurationHelper:
     def set_last_block(self, last_block):
         self.last_block = last_block
 
-    def dump(self, last_block):
-        self.config.setint('scanner', 'last_block', str(last_block))
+    def dump(self):
+        self.config.set('scanner', 'last_block', str(self.last_block))
         with open(self.config_file_path, 'w') as configfile:
             self.config.write(configfile)
