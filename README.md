@@ -10,11 +10,10 @@ Description=Ethereum Service
 After=network.target
 
 [Service]
-ExecStart=/home/beeoz/projects/ethscription-scanner/venv/bin/python3 -m scanner -c /home/beeoz/projects/ethscription-scanner/scanner.conf
+ExecStart=/home/beeoz/projects/ethscription-scanner/venv/bin/python3 -m scanner
 WorkingDirectory=/home/beeoz/projects/ethscription-scanner/
-StandardOutput=syslog
-StandardError=syslog
-SyslogIdentifier=ethereum
+Environment=ETHEREUM_API=https://mainnet.infura.io/v3/API_KEY
+Environment=PROJECT_DIRECTORY=/home/beeoz/projects/ethscription-scanner
 
 [Install]
 WantedBy=multi-user.target
@@ -26,3 +25,4 @@ sudo systemctl start ethereum
 sudo systemctl enable ethereum
 sudo systemctl status ethereum
 ```
+
